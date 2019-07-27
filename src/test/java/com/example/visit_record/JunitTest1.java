@@ -81,7 +81,7 @@ public class JunitTest1 {
             pool.execute(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(Thread.currentThread().getName());
+
                     String url = "http://localhost:" + 8080 + "/1";
                     //url 和返回类型写上
                     template.getForObject(url,String.class);//每人连续敲几次.

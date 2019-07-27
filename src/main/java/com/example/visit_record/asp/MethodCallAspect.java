@@ -110,7 +110,7 @@ ArrayList save=new ArrayList(capacity);
 
     @AfterReturning(returning = "ret", pointcut = "methodCall()")
     //应该把返回写这里.
-    public void doAfterReturning(Object ret) {//ret是切点return的内容.
+    public   void doAfterReturning(Object ret) {//ret是切点return的内容.
 //        System.out.println("doAfterReturning");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();//获取request
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();//获取response
@@ -135,8 +135,8 @@ ArrayList save=new ArrayList(capacity);
         tp.submit(new Runnable() {
             //job函数
 
-            public void run() {
-
+            public    void  run() {
+                synchronized (System.class){;//把需要唯一访问的操作括起来.
                 if (save.size()>=capacity){//这个地方如果写等号就会出现数组无线添加的bug么?
 //                    莫名其妙又好了
                     //xieru sql,清空save
@@ -149,13 +149,14 @@ ArrayList save=new ArrayList(capacity);
                     System.out.println("写入 sql后size:"+save.size());
                     save.clear();
                     System.out.println("清空save后size:"+save.size());
-//                    save.add(msg);
+                    save.add(msg);
                 }
-//                else
+                else
 
                         //写入save
+                {
                     save.add(msg);
-
+                }
                     System.out.println("xieru save当前size:"+save.size());
 //                    System.out.println(save.toString());
 
@@ -170,7 +171,8 @@ ArrayList save=new ArrayList(capacity);
 
 
 
-        });
+        }}
+        );
 
 
 
