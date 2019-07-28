@@ -136,15 +136,11 @@ ArrayList save=new ArrayList(capacity);
             //job函数
 
             public    void  run() {
-                synchronized (System.class){;//把需要唯一访问的操作括起来.
+                synchronized (save.getClass()){;//把需要唯一访问的操作括起来.
                 if (save.size()>=capacity){//这个地方如果写等号就会出现数组无线添加的bug么?
 //                    莫名其妙又好了
                     //xieru sql,清空save
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
 
                     System.out.println("写入 sql后size:"+save.size());
                     save.clear();
