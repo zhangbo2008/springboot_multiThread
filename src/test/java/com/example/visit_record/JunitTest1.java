@@ -63,7 +63,7 @@ public class JunitTest1 {
 @Test
     public  void main1() {
 
-        int threadNum=200000;
+        int threadNum=20000;
         CountDownLatch countDownLatch = new CountDownLatch(threadNum);//计数器
 
         ExecutorService pool = Executors.newFixedThreadPool(200);
@@ -87,6 +87,11 @@ public class JunitTest1 {
                     template.getForObject(url,String.class);//每人连续敲几次.
                     template.getForObject(url,String.class);
                     template.getForObject(url,String.class);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     countDownLatch.countDown();
                 }
             });

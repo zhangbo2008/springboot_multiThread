@@ -11,10 +11,7 @@ public class Learnlocks2 extends Thread{
         Learnlocks2 l1 = new Learnlocks2();
         Learnlocks2 l2 = new Learnlocks2();
         Learnlocks2 l3 = new Learnlocks2();
-        Learnlocks2 l4 = new Learnlocks2();
-        Learnlocks2 l5 = new Learnlocks2();
-        Learnlocks2 l7 = new Learnlocks2();
-        Learnlocks2 l6 = new Learnlocks2();
+
         //如果每一个线程的加都有效,才叫并发实现了.
         new Thread(l1).start();
         try {

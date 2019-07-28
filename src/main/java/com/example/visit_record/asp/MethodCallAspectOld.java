@@ -1,8 +1,6 @@
 package com.example.visit_record.asp;
 
 
-import lombok.Synchronized;
-import org.apache.commons.beanutils.BeanUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -12,16 +10,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author wangxin17
@@ -33,9 +27,9 @@ import java.util.concurrent.ScheduledExecutorService;
 @Component
 @EnableAsync
 
-public class MethodCallAspect {
+public class MethodCallAspectOld {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(MethodCallAspect.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(MethodCallAspectOld.class);
 //给一个线程池,做多线程
 ExecutorService tp = Executors.newFixedThreadPool(5);
 
@@ -53,12 +47,18 @@ ArrayList save=new ArrayList(capacity);
 /*    //因为spring boot 有一些默认的访问地址，这里进行排除
     @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) && execution(* com.jdcloud.zhike.openapi.web.controller.*.*(..))")*/
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)" )
+//    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)" )
+//    先把这个old版的暂停使用,因为需要10s穿一次,每一次访问都记录,数据库也扛不住
+
+
+
+
+
     public void methodCall() {
         System.out.println("methodCall");
     }
 
-    @Before("methodCall()")//这里面只获取请求时间,需要返回请求的路径和时间
+//    @Before("methodCall()")//这里面只获取请求时间,需要返回请求的路径和时间
     public void doBefore(JoinPoint joinPoint) {
 //        System.out.println("doBefore");
         /*startTime.set(new Date());
@@ -108,7 +108,7 @@ ArrayList save=new ArrayList(capacity);
         LOGGER.info(builder.toString());*/
     }
 
-    @AfterReturning(returning = "ret", pointcut = "methodCall()")
+//    @AfterReturning(returning = "ret", pointcut = "methodCall()")
     //应该把返回写这里.
     public   void doAfterReturning(Object ret) {//ret是切点return的内容.
 //        System.out.println("doAfterReturning");
