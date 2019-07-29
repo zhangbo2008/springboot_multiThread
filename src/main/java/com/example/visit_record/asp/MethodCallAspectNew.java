@@ -18,10 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author wangxin17
@@ -40,8 +37,8 @@ public class MethodCallAspectNew {
 
 
 
-//给一个线程池,做多线程,改成定时任务,
-ScheduledExecutorService tp = Executors.newScheduledThreadPool(5);
+//给一个线程池,做多线程,改成定时任务,这里如果开小了,sleep在多线程的效果就不明显.尽量开大点.
+ScheduledExecutorService tp = Executors.newScheduledThreadPool(200);
 
 int capacity=3;
 ArrayList save=new ArrayList(capacity);
@@ -50,7 +47,8 @@ private int flag=0;//表示开始没有人点击时候不用开启10s循环的�
     private ThreadLocal<Date> clickTime = new ThreadLocal<>();
     private ThreadLocal<String> method = new ThreadLocal<>();
     private ThreadLocal<String> uri = new ThreadLocal<>();
-    private HashMap map=new HashMap<>();
+    private ConcurrentHashMap  map=new ConcurrentHashMap<>();
+//    private HashMap map =new HashMap();
 //用ThreadLocal变量可以线程之间不干扰这个变量的值.
     //每一个线程都做了副本
 
@@ -180,7 +178,11 @@ private int flag=0;//表示开始没有人点击时候不用开启10s循环的�
 //需要2个线程,一个是不停的接收信息写入map
             //一个是定时线程,到10s就写入sql,清空map,对数据库用事务来操作.
             public    void  run() {
-                    synchronized (map.getClass()){
+
+
+
+//                    synchronized (map.getClass())
+                    {
 
                         if ( flag==0&&map.size()>0)
                         {   flag=1;
@@ -191,7 +193,7 @@ private int flag=0;//表示开始没有人点击时候不用开启10s循环的�
                                     @Override
                                     public void run() {
                                         System.out.println("每2秒执行一次,写入sql");
-                                        //打印第一个value的大小
+                                        //打印所有value的大小
                                         System.out.println(map.values());
                                         map.clear();
                                         System.out.println("清空map然后map大小"+map.size());
@@ -205,14 +207,76 @@ private int flag=0;//表示开始没有人点击时候不用开启10s循环的�
                         if (!map.containsKey(msg))
 
                         {map.put(msg,1);
-                        System.out.println("加入一条后:map大小"+map.size());}
+//添加sleep看异步的效率
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+                            System.out.println(
+
+                               Thread.currentThread().getName()+
+
+                                "加入一条后:map大小"+map.size());}
                         else{
+
+
+//添加sleep看异步的效率
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+
+
+
+
                             map.put(msg,(int)map.get(msg)+1);
-                            System.out.println("加入一条后:map大小"+map.size());
+                            System.out.println(Thread.currentThread().getName()+"加入一条后:map大小"+map.size());
                         }
                     }
             }
         } ,0,TimeUnit.SECONDS  );
+
+//
+//          ExecutorService pool = new ThreadPoolExecutor(2, 4, 1000, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(5),
+//                new ThreadFactory() {
+//                    public Thread newThread(Runnable r) {
+//                        System.out.println("线程"+r.hashCode()+"创建");
+//                        //线程命名
+//                        Thread th = new Thread(r,"threadPool"+r.hashCode());
+//                        return th;
+//                    }
+//                }, new ThreadPoolExecutor.CallerRunsPolicy())
+//
+//
+//          {
+//
+//
+//
+//
+//            protected void beforeExecute(Thread t,Runnable r) {
+//                System.out.println("准备执行："+ ((ThreadTask)r).getTaskName());
+//            }
+//
+//            protected void afterExecute(Runnable r,Throwable t) {
+//                System.out.println("执行完毕："+((ThreadTask)r).getTaskName());
+//            }
+//
+//            protected void terminated() {
+//                System.out.println("线程池退出");
+//            }
+//
+//
+//
+//
+//        };
 
 
 

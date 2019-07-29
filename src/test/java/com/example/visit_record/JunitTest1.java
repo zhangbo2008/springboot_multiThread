@@ -63,7 +63,7 @@ public class JunitTest1 {
 @Test
     public  void main1() {
 
-        int threadNum=20000;
+        int threadNum=200;
         CountDownLatch countDownLatch = new CountDownLatch(threadNum);//计数器
 
         ExecutorService pool = Executors.newFixedThreadPool(200);
